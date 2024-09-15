@@ -62,7 +62,46 @@ public class DeployLocalRepo2Jfrog {
                 System.out.print("error");
                 e.printStackTrace();
             }
+        }
+    }
 
+    /**
+     * Jfrog remove items
+     * @throws IOException
+     */
+    private static void removeItems() throws IOException {
+
+        String items[] = new String[] {
+                "com/foo/package/version",
+                "com/foo/package2/version2",
+        };
+
+        for (String item : items) {
+            System.out.println(item);
+
+            String[] commandStr = {"/usr/bin/curl", "-X", "DELETE", "-u", "username:password",
+                    "http://your.artifactory/artifactory/libs-release-local/" + item};
+
+            process = process.command(commandStr);
+            Process p;
+            try {
+                p = process.start();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                StringBuilder builder = new StringBuilder();
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line);
+                    builder.append(System.getProperty("line.separator"));
+                }
+                String result = builder.toString();
+                System.out.print(result);
+
+                p.destroy();
+
+            } catch (IOException e) {
+                System.out.print("error");
+                e.printStackTrace();
+            }
         }
     }
 }
